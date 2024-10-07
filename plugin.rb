@@ -23,3 +23,54 @@ module ::DiscourseScimPlugin
 
   require_relative "lib/discourse_scim_plugin/engine"
 end
+
+after_initialize do
+  class ::User
+    def self.scim_resource_type
+      Scimitar::Resources::User
+    end
+  
+    def self.scim_attributes_map
+      {
+        id:           :id,
+        userName:     :username,
+        displayName:  :name,
+        name:         {
+          formatted:  :name
+        },
+        emails:       [
+          {
+            match: "type",
+            with:  "work",
+            using: {
+              value:   :email,
+              primary: true
+            }
+          }
+        ],
+        active:       :active
+      }
+    end
+    
+    def self.scim_timestamps_map
+      {
+        created:      :created_at,
+        lastModified: :updated_at
+      }
+    end
+  
+    def self.scim_mutable_attributes
+      nil
+    end
+  
+    def self.scim_queryable_attributes
+      {
+        displayName:      { column: :name },
+        userName:         { column: :username },
+        emails:           { column: :emails }
+      }
+    end
+  
+    include Scimitar::Resources::Mixin
+  end
+end

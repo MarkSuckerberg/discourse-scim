@@ -20,6 +20,18 @@ require "scimitar"
 
 enabled_site_setting :scim_enabled
 
+add_api_key_scope(
+    :scim,
+    {
+      access_scim_endpoints: {
+        actions: %w[scim_v2/users#index scim_v2/users#show scim_v2/users#create
+          scim_v2/users#replace scim_v2/users#update scim_v2/users#destroy
+          scim_v2/groups#index scim_v2/groups#show scim_v2/groups#create
+          scim_v2/groups#update],
+      },
+    },
+  )
+
 module ::DiscourseScimPlugin
   PLUGIN_NAME = "scim"
 

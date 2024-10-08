@@ -18,6 +18,8 @@ gem 'scimitar', '2.9.0', {require: false }
 
 require "scimitar"
 
+enabled_site_setting :scim_enabled
+
 module ::DiscourseScimPlugin
   PLUGIN_NAME = "scim"
 
@@ -48,6 +50,15 @@ after_initialize do
             }
           }
         ],
+        groups: [
+          {
+            list:  :groups,
+            using: {
+              value:   :id,
+              display: :name
+            }
+          }
+        ],
         active:       :active
       }
     end
@@ -67,7 +78,63 @@ after_initialize do
       {
         displayName:      { column: :name },
         userName:         { column: :username },
-        emails:           { column: :emails }
+        emails:           { column: :emails },
+        groups:           { column: Group.arel_table[:id] },
+        "groups.value" => { column: Group.arel_table[:id] }
+
+      }
+    end
+  
+    include Scimitar::Resources::Mixin
+  end
+
+  class ::Group
+    def scim_users_and_groups
+      self.users.to_a + self.associated_groups.to_a
+    end
+  
+    def scim_users_and_groups=(mixed_array)
+      self.users        = mixed_array.select { |item| item.is_a?(User)  }
+      self.associated_groups = mixed_array.select { |item| item.is_a?(Group) }
+    end
+
+    def self.scim_resource_type
+      Scimitar::Resources::Group
+    end
+  
+    def self.scim_attributes_map
+      {
+        id:          :id,
+        displayName: :name,
+        members:     [ # NB read-write, though individual items' attributes are immutable
+          list:  :scim_users_and_groups, # See adapter accessors, earlier in this file
+          using: {
+            value: :id
+          },
+          find_with: -> (scim_list_entry) {
+            id   = scim_list_entry['value']
+            type = scim_list_entry['type' ] || 'User' # Some online examples omit 'type' and believe 'User' will be assumed
+  
+            case type.downcase
+              when 'user'
+                User.find_by_id(id)
+              when 'group'
+                Group.find_by_id(id)
+              else
+                raise Scimitar::InvalidSyntaxError.new("Unrecognised type #{type.inspect}")
+            end
+          }
+        ]
+      }
+    end
+  
+    def self.scim_mutable_attributes
+      nil
+    end
+  
+    def self.scim_queryable_attributes
+      {
+        displayName: :name
       }
     end
   

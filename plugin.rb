@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# name: discourse-scim-plugin
+# name: discourse-scim
 # about: A plugin to add SCIM endpoints to discourse
 # version: 0.0.1
 # authors: Peter Bouda
-# url: https://github.com/pbouda/discourse-scim-plugin
+# url: https://forge.libre.sh/libre.sh/discourse-scim
 
 gem 'marcel', '1.0.0', {require: false }
 gem 'activestorage', '7.1.4', {require: false }
@@ -32,10 +32,10 @@ add_api_key_scope(
     },
   )
 
-module ::DiscourseScimPlugin
+module ::DiscourseScim
   PLUGIN_NAME = "scim"
 
-  require_relative "lib/discourse_scim_plugin/engine"
+  require_relative "lib/discourse_scim/engine"
 end
 
 after_initialize do

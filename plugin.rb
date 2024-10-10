@@ -39,6 +39,7 @@ module ::DiscourseScim
 end
 
 after_initialize do
+  # TODO: Check how to avoid monkey patching here
   class ::User
     def self.scim_resource_type
       Scimitar::Resources::User

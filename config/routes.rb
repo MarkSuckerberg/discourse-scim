@@ -5,7 +5,7 @@ require "scimitar"
 Discourse::Application.routes.draw { 
   namespace :scim_v2 do
     mount Scimitar::Engine, at: '/'
-      
+
     get    'Users',     to: 'users#index'
     get    'Users/:id', to: 'users#show'
     post   'Users',     to: 'users#create'

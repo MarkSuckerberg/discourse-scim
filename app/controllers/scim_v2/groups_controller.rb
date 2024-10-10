@@ -4,6 +4,7 @@ require "scimitar"
 
 module Scim
   class ScimV2::GroupsController < Scimitar::ActiveRecordBackedResourcesController
+    # TODO: Check why requires_plugin is not available here
     # requires_plugin PLUGIN_NAME
     protect_from_forgery with: :null_session
 

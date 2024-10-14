@@ -16,6 +16,11 @@ Discourse::Application.routes.draw {
     get    'Groups',     to: 'groups#index'
     get    'Groups/:id', to: 'groups#show'
     post   'Groups',     to: 'groups#create'
+    put    'Groups/:id', to: 'groups#replace'
     patch  'Groups/:id', to: 'groups#update'
+    delete 'Groups/:id', to: 'groups#destroy'
+
+    # TODO: Add catchall that sends a not available
+    #get '*unmatched_route', to: 'application#raise_not_found!'
   end
 }

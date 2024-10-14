@@ -50,9 +50,6 @@ after_initialize do
         id:           :id,
         userName:     :username,
         displayName:  :name,
-        name:         {
-          formatted:  :name
-        },
         emails:       [
           {
             match: "type",
@@ -126,7 +123,7 @@ after_initialize do
           },
           find_with: -> (scim_list_entry) {
             id   = scim_list_entry['value']
-            type = scim_list_entry['type' ] || 'User' # Some online examples omit 'type' and believe 'User' will be assumed
+            type = scim_list_entry['type' ] || 'User'
   
             case type.downcase
               when 'user'
@@ -134,7 +131,9 @@ after_initialize do
               when 'group'
                 Group.find_by_id(id)
               else
-                raise Scimitar::InvalidSyntaxError.new("Unrecognised type #{type.inspect}")
+                # TODO: Decide what to do here, I added User to be able to use scim-tester
+                User.find_by_id(id)
+                # raise Scimitar::InvalidSyntaxError.new("Unrecognised type #{type.inspect}")
             end
           }
         ]

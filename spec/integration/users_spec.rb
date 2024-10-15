@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "User SCIM endpoint" do
+describe "User SCIM endpoints" do
   before do
     SiteSetting.chat_enabled = true
     SiteSetting.chat_allowed_groups = Group::AUTO_GROUPS[:everyone]
@@ -91,5 +91,17 @@ describe "User SCIM endpoint" do
     expect(response.status).to eq(200)
     response_content = JSON.parse(response.body)
     expect(response_content["displayName"]).to eq("Changed Name") 
+  end
+
+  it "can delete a user" do
+    create_user
+    response_content = JSON.parse(response.body)
+    delete "/scim_v2/Users/#{response_content["id"]}",
+      headers: {
+        "Authorization" => "Bearer " + scim_api_key.key,
+        "Content-Type"  => "application/scim+json"
+      },
+      as: :json
+    expect(response.status).to eq(204)
   end
 end

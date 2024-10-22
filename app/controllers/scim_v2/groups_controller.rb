@@ -4,9 +4,19 @@ require "scimitar"
 
 module Scim
   class ScimV2::GroupsController < Scimitar::ActiveRecordBackedResourcesController
-    # TODO: Check why requires_plugin is not available here
-    # requires_plugin PLUGIN_NAME
     protect_from_forgery with: :null_session
+
+    # We check for the plugin here manually as we do not inherit from Discourse's ApplicationController
+    # and do not have access to requires_plugin
+    before_action do
+      if plugin = Discourse.plugins_by_name[DiscourseScim::PLUGIN_NAME]
+        raise PluginDisabled.new if !plugin.enabled?
+      elsif Rails.env.test?
+        raise "Required plugin '#{DiscourseScim::PLUGIN_NAME}' not found. The string passed to requires_plugin should match the plugin's name at the top of plugin.rb"
+      else
+        Rails.logger.warn("Required plugin '#{DiscourseScim::PLUGIN_NAME}' not found")
+      end
+    end
 
     protected
 
@@ -17,6 +27,5 @@ module Scim
       def storage_scope
           Group.all # Or e.g. "User.where(is_deleted: false)" - whatever base scope you require
       end
-
   end
 end

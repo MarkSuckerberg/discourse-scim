@@ -2,7 +2,9 @@
 
 Rails.application.config.to_prepare do
   Scimitar.service_provider_configuration = Scimitar::ServiceProviderConfiguration.new({
-    # TODO: Add configuration about configured services here
+    authenticationSchemes: [
+      Scimitar::AuthenticationScheme.bearer
+    ]
   })
   Scimitar.engine_configuration = Scimitar::EngineConfiguration.new({
     token_authenticator: Proc.new do | token, options |

@@ -27,9 +27,7 @@ module DiscourseScim::GroupMixin
               when 'group'
                 Group.find_by_id(id)
               else
-                # TODO: Decide what to do here, I added User to be able to use scim-tester
                 User.find_by_id(id)
-                # raise Scimitar::InvalidSyntaxError.new("Unrecognised type #{type.inspect}")
             end
           }
         ]

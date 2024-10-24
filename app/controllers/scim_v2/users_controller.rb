@@ -25,7 +25,7 @@ module Scim
       end
 
       def storage_scope
-        User.all # Or e.g. "User.where(is_deleted: false)" - whatever base scope you require
+        User.all
       end
   end
 end

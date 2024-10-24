@@ -3,7 +3,7 @@
 require "scimitar"
 
 module Scim
-  class ScimV2::GroupsController < Scimitar::ActiveRecordBackedResourcesController
+  class ScimV2::ErrorsController < Scimitar::ApplicationController
     protect_from_forgery with: :null_session
 
     # We check for the plugin here manually as we do not inherit from Discourse's ApplicationController
@@ -18,14 +18,8 @@ module Scim
       end
     end
 
-    protected
-
-      def storage_class
-          Group
-      end
-
-      def storage_scope
-          Group.all
-      end
+    def not_found
+      handle_scim_error(Scimitar::NotFoundError.new(params["path"]))
+    end
   end
 end

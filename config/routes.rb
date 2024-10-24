@@ -20,7 +20,6 @@ Discourse::Application.routes.draw {
     patch  'Groups/:id', to: 'groups#update'
     delete 'Groups/:id', to: 'groups#destroy'
 
-    # TODO: Add catchall that sends a not available
-    #get '*unmatched_route', to: 'application#raise_not_found!'
+    get '*path', to: 'errors#not_found'
   end
 }

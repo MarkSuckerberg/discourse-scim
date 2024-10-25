@@ -12,8 +12,8 @@ module DiscourseScim::GroupMixin
       {
         id:          :id,
         displayName: :name,
-        members:     [ # NB read-write, though individual items' attributes are immutable
-          list:  :scim_users_and_groups, # See adapter accessors, earlier in this file
+        members:     [
+          list:  :scim_users_and_groups,
           using: {
             value: :id
           },
@@ -46,11 +46,11 @@ module DiscourseScim::GroupMixin
   end
 
   def scim_users_and_groups
-    self.users.to_a + self.associated_groups.to_a
+    self.users.select{ |item| item.id >= 0 }.to_a + self.associated_groups.to_a
   end
 
   def scim_users_and_groups=(mixed_array)
-    self.users        = mixed_array.select { |item| item.is_a?(User)  }
+    self.users = mixed_array.select { |item| item.is_a?(User) && item.id >=0  }
     self.associated_groups = mixed_array.select { |item| item.is_a?(Group) }
   end
 

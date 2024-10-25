@@ -25,7 +25,7 @@ module Scim
       end
 
       def storage_scope
-        User.all
+        User.where("id >= ?", 0)
       end
   end
 end

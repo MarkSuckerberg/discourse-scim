@@ -33,7 +33,7 @@ add_api_key_scope(
   )
 
 module ::DiscourseScim
-  PLUGIN_NAME = "scim"
+  PLUGIN_NAME = "discourse-scim"
 
   require_relative "lib/discourse_scim/engine"
   require_relative "lib/discourse_scim/user_mixin"

@@ -26,7 +26,7 @@ describe "Group SCIM endpoints" do
       ],
       displayName: "TestGroup",
       members: [
-        { "value": "1"}
+        { "value": "1" }
       ]
     },
     as: :json

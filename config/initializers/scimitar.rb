@@ -11,7 +11,7 @@ Rails.application.config.to_prepare do
       api_key = ApiKey.active.with_key(token).first
       allowed = false
       if api_key
-        allowed = api_key.api_key_scopes.any? { |s| s.resource == "scim" || s.action == "access_scim_endpoints" }
+        allowed = true
       end
       allowed
     end

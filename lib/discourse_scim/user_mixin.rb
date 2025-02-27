@@ -51,7 +51,7 @@ module DiscourseScim::UserMixin
             }
           }
         ],
-        userGroups: [
+        roles: [
           {
             list: :groups,
             find_with: ->(value) { Group.find(value["value"]) },

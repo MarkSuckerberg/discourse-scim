@@ -45,15 +45,6 @@ module DiscourseScim::UserMixin
         groups: [
           {
             list: :groups,
-            using: {
-              value:   :id,
-              display: :name
-            }
-          }
-        ],
-        userGroups: [
-          {
-            list: :groups,
             find_with: ->(value) { Group.find(value["value"]) },
             using: {
               value:   :id,

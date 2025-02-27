@@ -6,6 +6,9 @@ Rails.application.config.to_prepare do
       Scimitar::AuthenticationScheme.bearer
     ]
   })
+  
+  Scimitar::Resources::User.extend_schema(EditableUserGroups)
+  
   Scimitar.engine_configuration = Scimitar::EngineConfiguration.new({
     token_authenticator: Proc.new do | token, options |
       api_key = ApiKey.active.with_key(token).first

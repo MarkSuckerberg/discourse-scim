@@ -51,6 +51,16 @@ module DiscourseScim::UserMixin
             }
           }
         ],
+        userGroups: [
+          {
+            list: :groups,
+            find_with: ->(value) { Group.find(value["value"]) },
+            using: {
+              value:   :id,
+              display: :name
+            }
+          }
+        ],
         active: :active
       }
     end

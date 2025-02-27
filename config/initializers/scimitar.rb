@@ -16,7 +16,7 @@ class EditableUserGroups < Scimitar::Schema::Base
 
   def self.scim_attributes
     [
-      Scimitar::Schema::Attribute.new(name: "groups", multiValued: true, complexType: Scimitar::ComplexTypes::ReferenceGroup, mutability: "writeOnly"),
+      Scimitar::Schema::Attribute.new(name: "userGroups", multiValued: true, complexType: Scimitar::ComplexTypes::ReferenceGroup, mutability: "writeOnly"),
     ]
   end
 end

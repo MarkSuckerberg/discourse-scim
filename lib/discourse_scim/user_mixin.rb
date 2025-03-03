@@ -53,6 +53,12 @@ module DiscourseScim::UserMixin
         ],
         roles: [
           {
+            match: 'value', with: '1', using: { value: '1', display: 'Admins (Dynamic)', primary: :admin}
+          },
+          {
+            match: 'value', with: '2', using: { value: '2', display: 'Moderators (Dynamic)', primary: :moderator}
+          },
+          {
             list: :groups,
             find_with: ->(value) { Group.find(value["value"]) },
             using: {

@@ -44,7 +44,7 @@ module DiscourseScim::UserMixin
           demod = false
           self.grant_moderation!
         when 10..14
-          self.change_trust_level!(scim_role[:value] - 10)
+          self.change_trust_level!(Integer(scim_role[:value]) - 10)
       end
       Group.find(scim_role[:value])
     end
@@ -56,6 +56,8 @@ module DiscourseScim::UserMixin
     if demod
       self.revoke_moderation!
     end
+
+    self.set_automatic_groups
   end
 
   def scim_roles_mapper
@@ -75,16 +77,8 @@ module DiscourseScim::UserMixin
         userName:    :username,
         displayName: :name,
         emails:      :scim_email_mapper,
-        groups: [
-          {
-            list: :groups,
-            using: {
-              value:   :id,
-              display: :name
-            }
-          }
-        ],
-        roles: :scim_roles_mapper,
+        groups:      :scim_roles_mapper,
+        roles:       :scim_roles_mapper,
         active: :active
       }
     end

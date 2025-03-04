@@ -33,7 +33,7 @@ module DiscourseScim::UserMixin
 
   def scim_roles_mapper=(scim_roles)
     deadmin = self.admin
-    demod = self.mod
+    demod = self.moderator
 
     self.groups = scim_roles.map do |scim_role|
       case Integer(scim_role[:value])

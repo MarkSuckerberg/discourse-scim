@@ -31,6 +31,39 @@ module DiscourseScim::UserMixin
     end
   end
 
+  def scim_roles_mapper=(scim_roles)
+    deadmin = self.admin
+    demod = self.mod
+
+    self.groups = scim_roles.map do |scim_role|
+      case Integer(scim_role[:value])
+        when 1
+          deadmin = false
+          self.grant_admin!
+        when 2
+          demod = false
+          self.grant_moderation!
+        when 10..14
+          self.change_trust_level!(scim_role[:value] - 10)
+      end
+      Group.find(scim_role[:value])
+    end
+
+    if deadmin
+      self.revoke_admin!
+    end
+
+    if demod
+      self.revoke_moderation!
+    end
+  end
+
+  def scim_roles_mapper
+    self.groups.map do |user_group|
+      { value: user_group[:id], display: user_group[:name] }
+    end
+  end
+
   module UserClassMethods
     def scim_resource_type
       Scimitar::Resources::User
@@ -51,22 +84,7 @@ module DiscourseScim::UserMixin
             }
           }
         ],
-        roles: [
-          {
-            match: 'value', with: '1', using: { value: '1', display: 'Admins (Dynamic)', primary: :admin}
-          },
-          {
-            match: 'value', with: '2', using: { value: '2', display: 'Moderators (Dynamic)', primary: :moderator}
-          },
-          {
-            list: :groups,
-            find_with: ->(value) { Group.find(value["value"]) },
-            using: {
-              value:   :id,
-              display: :name
-            }
-          }
-        ],
+        roles: :scim_roles_mapper,
         active: :active
       }
     end

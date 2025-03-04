@@ -35,7 +35,7 @@ module DiscourseScim::UserMixin
     deadmin = self.admin
     demod = self.moderator
 
-    self.groups = scim_roles.map do |scim_role|
+    groups = scim_roles.map do |scim_role|
       case Integer(scim_role[:value])
         when 1
           deadmin = false
@@ -45,8 +45,9 @@ module DiscourseScim::UserMixin
           self.grant_moderation!
         when 10..14
           self.change_trust_level!(Integer(scim_role[:value]) - 10)
+        else
+          Group.find(scim_role[:value])
       end
-      Group.find(scim_role[:value])
     end
 
     if deadmin
@@ -57,6 +58,7 @@ module DiscourseScim::UserMixin
       self.revoke_moderation!
     end
 
+    self.groups = groups.compact
     self.set_automatic_groups
   end
 

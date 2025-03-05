@@ -32,43 +32,55 @@ module DiscourseScim::UserMixin
   end
 
   def scim_roles_mapper=(scim_roles)
-    deadmin = self.admin
-    demod = self.moderator
-    trust_level = -1
+    oldgroups = self.groups do |group|
+      Integer(group[:id])
+    end
 
     groups = scim_roles.map do |scim_role|
-      case Integer(scim_role[:value])
-        when 1
-          deadmin = false
-          self.grant_admin!
-          nil
-        when 2
-          demod = false
-          self.grant_moderation!
-          nil
-        when 10..14
-          if Integer(scim_role[:value]) - 10 > trust_level
-            trust_level = Integer(scim_role[:value]) - 10
-          end
-          nil
-        else
-          Group.find_by_id(scim_role[:value])
+      Integer(scim_role[:value])
+    end
+
+    groups = groups.compact
+    trust_level = -1
+
+    # Remove old groups
+    for group in oldgroups
+      if !groups.include?(group)
+        case group
+          when 1
+            self.revoke_admin!
+          when 2
+            self.revoke_moderation!
+          when 10..14
+            next
+          else
+            Group.find_by_id(group).remove(self)
+        end
       end
     end
 
-    if deadmin
-      self.revoke_admin!
-    end
-
-    if demod
-      self.revoke_moderation!
+    # Add new groups
+    for group in groups
+      if !oldgroups.include?(group)
+        case group
+          when 1
+            self.grant_admin!
+          when 2
+            self.grant_moderation!
+          when 10..14
+            if group - 10 > trust_level
+              trust_level = group - 10
+            end
+          else
+            Group.find_by_id(group).add(self)
+        end
+      end
     end
 
     if trust_level >= 0
       self.change_trust_level!(trust_level)
     end
 
-    self.groups = groups.compact
     self.set_automatic_groups
   end
 

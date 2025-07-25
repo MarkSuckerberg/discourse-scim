@@ -14,7 +14,7 @@ gem "websocket-extensions", "0.1.0", { require: false }
 gem "websocket-driver", "0.6.1", { require: false }
 gem "actioncable", "8.0.2", { require: false }
 gem "rails", "8.0.2", { require: false }
-gem "scimitar", "2.10.0", { require: false }
+gem "scimitar", "2.11.0", { require: false }
 
 require "scimitar"
 
